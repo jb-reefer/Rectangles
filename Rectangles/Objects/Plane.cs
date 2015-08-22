@@ -39,5 +39,7 @@ namespace Rectangles.Objects
             EmbeddedRectangles.Add(rectangle.StartPoint(), rectangle);
         }
 
+
+
     }
 }

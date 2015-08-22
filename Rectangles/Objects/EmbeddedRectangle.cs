@@ -4,23 +4,24 @@
     {
         public Point TopLeftCorner;
 
-        public AbstractEmbeddedRectangle(int topLength, int rightLength, int bottomLength, int leftLength, int startX, int startY) : base(topLength, rightLength, bottomLength, leftLength)
+        /*
+        public AbstractEmbeddedRectangle(int top, int right, int bottom, int left, int startX, int startY) : base(top, right, bottom, left)
         {
             TopLeftCorner = new Point(startX, startY);
-        }
+        }*/
 
         public Point StartPoint()
         {
             return TopLeftCorner;
         }
-
     }
 
     public class EmbeddedRectangle : AbstractEmbeddedRectangle
     {
-        public EmbeddedRectangle(int topLength, int rightLength, int bottomLength, int leftLength, int startX, int startY) : base(topLength, rightLength, bottomLength, leftLength, startX, startY)
+        /*
+        public EmbeddedRectangle(int top, int right, int bottom, int left, int startX, int startY) : base(top, right, bottom, left, startX, startY)
         {
-        }
+        }*/
 
     }
 }

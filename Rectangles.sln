@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rectangles", "Rectangles\Re
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rectangles.Test", "Rectangles.Test\Rectangles.Test.csproj", "{5A720804-EB4F-4E96-A636-6D15401B37BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rectangles.UI", "Rectangles.UI\Rectangles.UI.csproj", "{BB4CD5ED-2ADA-42D3-9F14-B869B7DA52C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5A720804-EB4F-4E96-A636-6D15401B37BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A720804-EB4F-4E96-A636-6D15401B37BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A720804-EB4F-4E96-A636-6D15401B37BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB4CD5ED-2ADA-42D3-9F14-B869B7DA52C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB4CD5ED-2ADA-42D3-9F14-B869B7DA52C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB4CD5ED-2ADA-42D3-9F14-B869B7DA52C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB4CD5ED-2ADA-42D3-9F14-B869B7DA52C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

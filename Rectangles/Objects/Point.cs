@@ -2,13 +2,23 @@
 {
     public class Point
     {
-        public int X;
-        public int Y;
+        public double X;
+        public double Y;
 
-        public Point(int x, int y)
+        public Point(double x, double y)
         {
             X = x;
             Y = y;
+        }
+
+        public Point AddX(double x)
+        {
+            return new Point(X + x, Y);
+        }
+
+        public Point AddY(double y)
+        {
+            return new Point(X, Y + y);
         }
     }
 
