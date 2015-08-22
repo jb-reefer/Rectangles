@@ -1,62 +1,122 @@
-﻿using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Rectangles.Objects
 {
     // TODO: Extract this to an abstract once we have the logic worked out
     public class Rectangle
     {
-        // stuff about points
-        // stuff about edges
-        // isX isY etc, but not intersection logic
-        public Line Top;
-        public Line Right;
-        public Line Bottom;
-        public Line Left;
+        public enum Direction
+        {
+            Top = 0,
+            Right = 1,
+            Bottom = 2,
+            Left = 3
+        }
 
-        public List<Line> Sides;
-        
+
+        public string Name;
+        public Guid Id;
+
+        public Point StartPoint;
+        public double Width;
+        public double Height;
+
+
+        //Computed properties
+        public Point TopLeft
+        {
+            get { return StartPoint; }
+        }
+
+        public Point TopRight
+        {
+            get { return new Point(StartPoint.X + Width, StartPoint.Y); }
+        }
+
+        public Point BottomRight
+        {
+            get { return new Point(StartPoint.X + Width, StartPoint.Y + Height); }
+        }
+
+        public Point BottomLeft
+        {
+            get { return new Point(StartPoint.X, StartPoint.Y + Height); }
+        }
+
         // TODO: Sanity checks
-        public Rectangle(Line top, Line right, Line bottom, Line left)
+        public Rectangle()
         {
-            Top = top;
-            Right = right;
-            Bottom = bottom;
-            Left = left;
-
-            SetUpSides();
+            Id = Guid.NewGuid();
         }
 
-        public Rectangle(double startX, double startY, double width, double height)
-        {
-            Point startPoint = new Point(startX, startY);
-            Left = new Line( startPoint.AddY(-height) , startPoint);
-            Top = new Line(startPoint, startPoint.AddX(width));
-            Right = new Line(Top.End, Top.End.AddY(-height));
-            Bottom = new Line(Left.Start, Top.Start);
 
-            SetUpSides();
-        }
-
-        public void SetUpSides()
+        public Rectangle(double startX, double startY, double width, double height) : this()
         {
-            Sides = new List<Line>(4);
-            // TODO: Looks like shit
-            Sides.AddRange(new List<Line> { Top, Right, Bottom, Left });
+            StartPoint = new Point(startX, startY);
+            Width = width;
+            Height = height;
         }
 
 
         public bool IsAdjacent(Rectangle other)
         {
-            for (int i = 0; i < Sides.Count; i++)
+            List<Line> mySides = GetSides();
+            List<Line> otherSides = other.GetSides();
+
+            for (int i = 0; i < mySides.Count; i++)
             {
-                if (Sides[i].DoesThisLineContain(other.Sides[i]))
+                if (mySides[i].DoesThisLineContain(otherSides[i]))
                 {
                     return true;
                 }
             }
 
+            /*
+            var l1 = x;
+            var r1 = x + w;
+            var l2 = other.x;
+            var r2 = other.x + other.Width
+            bool isSideShared = r1 == r2 || r1 == l2 || l1 == r2 || l1 == l2;
+            */
+
+
             return false;
+        }
+
+        public bool Contains(Rectangle other)
+        {
+            // TODO: Does other count as Intersected if it is contained?
+
+            foreach (Point corner in other.GetCorners())
+            {
+                if (!IsPointWithinMe(corner)) return false;
+            }
+
+            return true;
+        }
+
+
+        public List<Line> GetSides()
+        {
+            return new List<Line>
+            {
+                new Line(TopLeft, TopRight),
+                new Line(TopRight, BottomRight),
+                new Line(BottomLeft, BottomRight),
+                new Line(TopLeft, BottomLeft)
+            };
+        }
+
+        private List<Point> GetCorners()
+        {
+            return new List<Point>
+            {
+                TopLeft,
+                TopRight,
+                BottomRight,
+                BottomLeft
+            };
         }
 
         public bool IsPointWithinMe(Point point)
@@ -64,18 +124,20 @@ namespace Rectangles.Objects
             return IsPointInYBounds(point) && IsPointInXBounds(point);
         }
 
+        // Could also use a + height style of things
         private bool IsPointInYBounds(Point point)
         {
-            if (Top.Start.Y >= point.Y && point.Y >= Bottom.Start.Y)
+            if (TopRight.Y >= point.Y && point.Y <= BottomRight.Y)
             {
                 return true;
             }
             return false;
         }
 
+        // Could also use a + width style
         private bool IsPointInXBounds(Point point)
         {
-            if (Left.Start.X <= point.X && point.X <= Right.Start.Y)
+            if (BottomLeft.X <= point.X && point.X <= BottomRight.X)
             {
                 return true;
             }

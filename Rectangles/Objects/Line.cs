@@ -1,38 +1,60 @@
 ﻿using System;
-using System.Runtime.InteropServices;
+using System.IO;
 
 namespace Rectangles.Objects
 {
     public class Line
     {
+        public enum Orientation
+        {
+            Vertical,
+            Horizontal
+        }
+
         // A line is described by two points, so....
         public Point Start;
         public Point End;
-
-        public double Slope
-        {
-            get
-            {
-                return GetSlope();
-            }
-        }
+        public Orientation Direction;
 
         public Line(Point start, Point end)
         {
+            if (start.Equals(end))
+            {
+                throw new InvalidDataException("A line may not have the same Start and End points.");
+            }
+
             Start = start;
             End = end;
+
+            Direction = GetDirection();
         }
 
-        public Line(Point start, double slope, double length)
+        public Line(Point start, double length, Orientation direction)
         {
             Start = start;
+            Direction = direction;
 
-            
+            if (direction == Orientation.Horizontal)
+            {
+                End = new Point(start.X + length, start.Y);
+            }
+            else if (direction == Orientation.Horizontal)
+            {
+                End = new Point(start.X, start.Y + length);
+            }
+            else
+            {
+                throw new InvalidDataException("Invalid orientation on line with start point " + start);
+            }
         }
 
-        private double GetSlope()
+        public Orientation GetDirection()
         {
-            return (End.Y - Start.Y)/(End.X - Start.X);
+            if (Start.X == End.X) return Orientation.Vertical;
+            if (Start.Y == End.Y) return Orientation.Horizontal;
+
+            // TODO: This might not be right.
+            throw new InvalidDataException("Lines in Rectangles must be vertical or horizontal.");
         }
 
         public bool DoesThisLineIntersect(Line other)
@@ -40,11 +62,19 @@ namespace Rectangles.Objects
             throw new NotImplementedException();
         }
 
+        public Point GetIntersectionPoint(Line other)
+        {
+            // TODO: Figure out sanity checking with intersection points, if we're adjacent there's an infinite number
+
+            throw new MissingMethodException();
+        }
+
+
         public bool DoesThisLineContain(Line other)
         {
             if (IsOtherPointBetweenMyPoints(other.Start) || IsOtherPointBetweenMyPoints(other.End))
             {
-                if (other.Slope == Slope)
+                if (other.Direction == Direction)
                 {
                     return true;
                 }
@@ -53,19 +83,17 @@ namespace Rectangles.Objects
             return false;
         }
 
-        private double Distance(Point a, Point b)
+        private double DistanceBetweenPoints(Point a, Point b)
         {
-            return Math.Sqrt( Math.Pow( (a.X - b.X) , 2 ) + Math.Pow( (a.Y - b.Y) , 2));
-
+            return Math.Sqrt(Math.Pow((a.X - b.X), 2) + Math.Pow((a.Y - b.Y), 2));
         }
 
         private bool IsOtherPointBetweenMyPoints(Point other)
-        {            
+        {
             // If the distance of Start to Other + Other to End is the distance from Start to End, it's in between the two points
             // TODO: Fix this 
-            return (Distance(Start, other) + Distance(other, End)) == Distance(Start, End);
+            return (DistanceBetweenPoints(Start, other) + DistanceBetweenPoints(other, End)) ==
+                   DistanceBetweenPoints(Start, End);
         }
-
-
     }
 }
