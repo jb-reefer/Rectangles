@@ -35,7 +35,7 @@ namespace Rectangles.Objects
             return (End.Y - Start.Y)/(End.X - Start.X);
         }
 
-        public bool doesThisLineIntersect(Line other)
+        public bool DoesThisLineIntersect(Line other)
         {
             throw new NotImplementedException();
         }

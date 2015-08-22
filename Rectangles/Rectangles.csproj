@@ -39,9 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Objects\EmbeddedRectangle.cs" />
     <Compile Include="Objects\Line.cs" />
-    <Compile Include="Objects\Plane.cs" />
     <Compile Include="Objects\Point.cs" />
     <Compile Include="Objects\Rectangle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

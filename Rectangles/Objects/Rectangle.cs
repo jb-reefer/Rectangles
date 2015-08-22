@@ -15,11 +15,6 @@ namespace Rectangles.Objects
         public Line Left;
 
         public List<Line> Sides;
-
-        public Rectangle()
-        {
-            
-        }
         
         // TODO: Sanity checks
         public Rectangle(Line top, Line right, Line bottom, Line left)
