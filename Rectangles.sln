@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rectangles", "Rectangles\Rectangles.csproj", "{345DED6F-5BA4-4AA2-953B-351284FEC199}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rectangles.Test", "Rectangles.Test\Rectangles.Test.csproj", "{5A720804-EB4F-4E96-A636-6D15401B37BF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{345DED6F-5BA4-4AA2-953B-351284FEC199}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{345DED6F-5BA4-4AA2-953B-351284FEC199}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{345DED6F-5BA4-4AA2-953B-351284FEC199}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{345DED6F-5BA4-4AA2-953B-351284FEC199}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A720804-EB4F-4E96-A636-6D15401B37BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A720804-EB4F-4E96-A636-6D15401B37BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A720804-EB4F-4E96-A636-6D15401B37BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A720804-EB4F-4E96-A636-6D15401B37BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
