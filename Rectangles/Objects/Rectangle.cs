@@ -1,23 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 
 namespace Rectangles.Objects
 {
     // TODO: Extract this to an abstract once we have the logic worked out
     public class Rectangle
     {
-        public enum Direction
-        {
-            Top = 0,
-            Right = 1,
-            Bottom = 2,
-            Left = 3
-        }
-
-
-        public string Name;
-        public Guid Id;
-
+        public const int Top = 0;
+        public const int Right = 1;
+        public const int Bottom = 2;
+        public const int Left = 3;
+        
         public Point StartPoint;
         public double Width;
         public double Height;
@@ -47,7 +41,6 @@ namespace Rectangles.Objects
         // TODO: Sanity checks
         public Rectangle()
         {
-            Id = Guid.NewGuid();
         }
 
 
@@ -56,6 +49,14 @@ namespace Rectangles.Objects
             StartPoint = new Point(startX, startY);
             Width = width;
             Height = height;
+        }
+
+        public Rectangle(Line top, Line right, Line bottom, Line left) : this()
+        {
+            // TODO: Refactor this when pulling out Points
+            StartPoint = top.Start;
+            Width = top.Length;
+            Height = right.Length;
         }
 
 
@@ -71,15 +72,6 @@ namespace Rectangles.Objects
                     return true;
                 }
             }
-
-            /*
-            var l1 = x;
-            var r1 = x + w;
-            var l2 = other.x;
-            var r2 = other.x + other.Width
-            bool isSideShared = r1 == r2 || r1 == l2 || l1 == r2 || l1 == l2;
-            */
-
 
             return false;
         }
@@ -97,9 +89,38 @@ namespace Rectangles.Objects
         }
 
 
+        /// <summary>
+        /// Returns the Rectangle formed by the intersection of This and Other
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public Rectangle GetIntersection(Rectangle other)
         {
-            throw  new NotImplementedException();
+            if (Contains(other))
+            {
+                return null;
+            }
+
+            // TODO: Completely refactor Rectangle to only use Lines
+            try
+            {
+                List<Line> mySides = GetSides();
+                List<Line> otherSides = other.GetSides();
+
+
+                Line newTop = mySides[Top] - otherSides[Top];
+                Line newRight = mySides[Right] - otherSides[Right];
+                Line newBottom = mySides[Bottom] - otherSides[Bottom];
+                Line newLeft = mySides[Left] - otherSides[Left];
+
+                return new Rectangle(newTop, newRight, newBottom, newLeft);
+            }
+            catch
+            {
+                // Do nothing. There is no intersection.
+            }
+
+            return null;
         }
 
         public List<Line> GetSides()
@@ -132,7 +153,7 @@ namespace Rectangles.Objects
         // Could also use a + height style of things
         private bool IsPointInYBounds(Point point)
         {
-            if (TopRight.Y >= point.Y && point.Y <= BottomRight.Y)
+            if (TopRight.Y <= point.Y && point.Y <= BottomRight.Y)
             {
                 return true;
             }
@@ -147,6 +168,28 @@ namespace Rectangles.Objects
                 return true;
             }
             return false;
+        }
+
+        public override string ToString()
+        {
+            return "Top: " + GetSides()[0] + " Bottom: " + GetSides()[2];
+        }
+
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Rectangle)
+            {
+                return Equals((Rectangle)obj);
+            }
+            return base.Equals(obj);
+        }
+
+        public bool Equals(Rectangle other)
+        {
+            return this.StartPoint.Equals( other.StartPoint) &&
+                   this.Width == other.Width &&
+                   this.Height == other.Height;
         }
     }
 }

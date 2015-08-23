@@ -79,5 +79,26 @@ namespace Rectangles.Test
 
             Assert.IsTrue(a.DoesIntersectionExist(b));
         }
+
+        [Test]
+        public void VerticalLineSubtraction()
+        {
+            Line a = new Line(new Point(1, 1), 5, Line.Orientation.Vertical);
+            Line b = new Line(new Point(1, 3), 1, Line.Orientation.Vertical);
+            Console.WriteLine(a-b);
+
+            Assert.AreNotEqual(a, a-b);
+        }
+
+        [Test]
+        public void HorizontalLineSubtraction()
+        {
+            Line a = new Line(new Point(1, 1), 5, Line.Orientation.Horizontal);
+            Line b = new Line(new Point(3, 1), 1, Line.Orientation.Horizontal);
+            Console.WriteLine(a - b);
+
+            Assert.AreNotEqual(a, a - b);
+        }
+
     }
 }

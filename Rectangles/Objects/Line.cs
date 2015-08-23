@@ -16,6 +16,12 @@ namespace Rectangles.Objects
         public Point End;
         public Orientation Direction;
 
+        public double Length
+        {
+            get { return GetLength();}
+        }
+
+
         public Line(Point start, Point end)
         {
             if (start.Equals(end))
@@ -59,52 +65,52 @@ namespace Rectangles.Objects
 
         public bool DoesIntersectionExist(Line other)
         {
-            /* Final product, commented out to aid development
+            //Final product, commented out to aid development
             if (Direction == other.Direction)
             {
                 return false;
             }
 
-            return InXBounds(other) && InYBounds(other);
-            */
-
-            if (Direction == Orientation.Horizontal)
-            {
-                if (other.Direction == Orientation.Vertical)
-                {
-                    return InXBounds(other) && InYBounds(other);
-                }
-
-                return false;
-            }
-            else if (Direction == Orientation.Vertical)
-            {
-                if (other.Direction == Orientation.Horizontal)
-                {
-                    bool inXBounds = Start.X <= other.Start.X && other.Start.X <= End.X;
-                    bool inYBounds = other.Start.Y <= Start.Y && Start.Y <= other.End.Y;
-
-                    return inXBounds && inYBounds;
-
-                }
-
-                return false;
-            }
-
-            return false;
+            return OtherInXBounds(other) && OtherInYBounds(other);
         }
 
-        private bool InYBounds(Line other)
+        #region Y Bounds
+
+        private bool OtherInYBounds(Line other)
         {
-            bool inYBounds = Start.Y <= other.Start.Y || End.Y <= other.End.Y;
-            return inYBounds;
+            return OtherInYUpperBounds(other.Start) || OtherInYBottomBounds(other.End);
         }
 
-        private bool InXBounds(Line other)
+        private bool OtherInYBottomBounds(Point other)
         {
-            bool inXBounds = Start.X <= other.Start.X || other.End.X <= End.X;
-            return inXBounds;
+            return End.Y >= other.Y;
         }
+
+        private bool OtherInYUpperBounds(Point other)
+        {
+            return Start.Y <= other.Y;
+        }
+        #endregion
+
+        #region X Bounds
+
+        private bool OtherInXBounds(Line other)
+        {
+            return OtherInXLeftBounds(other.Start) && OtherInXRightBounds(other.End);
+        }
+
+        private bool OtherInXRightBounds(Point other)
+        {
+            return End.X >= other.X;
+        }
+
+        private bool OtherInXLeftBounds(Point other)
+        {
+            return Start.X <= other.X;
+        }
+
+        #endregion
+
 
         public Point GetIntersectionPoint(Line other)
         {
@@ -159,6 +165,119 @@ namespace Rectangles.Objects
             // TODO: Fix this 
             return (DistanceBetweenPoints(Start, other) + DistanceBetweenPoints(other, End)) ==
                    DistanceBetweenPoints(Start, End);
+        }
+
+        private double GetLength()
+        {
+            if (Direction == Orientation.Horizontal) return Math.Abs(Start.X - End.X);
+            if (Direction == Orientation.Vertical) return Math.Abs(Start.Y - End.Y);
+
+            return 0;
+        }
+
+        public override string ToString()
+        {
+            return Start + " -> " + End;
+        }
+
+        // Perform a geometric subtraction
+        public static Line operator -(Line a, Line b)
+        {
+            // Shorten the line
+            if (a.Direction == b.Direction)
+            {
+                if (a.Direction == Orientation.Vertical)
+                {
+                    double staticX = a.Start.X;
+                    double startY;
+                    // Figure out Y coords
+                    // Get Start Point
+                    // Start point is on A
+                    if (a.OtherInYUpperBounds(b.Start))
+                    {
+                        startY = b.Start.Y;
+                    }
+                    // Start point is not on A, take A's start point
+                    else
+                    {
+                        startY = a.Start.Y;
+                    }
+
+
+                    // Get End Point
+                    double endY;
+                    // Figure out Y coords
+                    // Get Start Point
+                    // Start point is on A
+                    if (a.OtherInYBottomBounds(b.End))
+                    {
+                        endY = b.End.Y;
+                    }
+                    // Start point is not on A, take A's start point
+                    else
+                    {
+                        endY = a.End.Y;
+                    }
+
+                    // Return intersection
+                    return new Line(new Point(staticX, startY), new Point(staticX, endY) );
+
+                }
+                else if (a.Direction == Orientation.Horizontal)
+                {
+                    double staticY = b.Start.Y;
+                    double startX;
+                    // Figure out Y coords
+                    // Get Start Point
+                    // Start point is on A
+                    if (a.OtherInXLeftBounds(b.Start))
+                    {
+                        startX = b.Start.X;
+                    }
+                    // Start point is not on A, take A's start point
+                    else
+                    {
+                        startX = a.Start.X;
+                    }
+
+
+                    // Get End Point
+                    double endX;
+                    // Figure out Y coords
+                    // Get Start Point
+                    // Start point is on A
+                    if (a.OtherInXRightBounds(b.End))
+                    {
+                        endX = b.End.X;
+                    }
+                    // Start point is not on A, take A's start point
+                    else
+                    {
+                        endX = a.End.X;
+                    }
+
+                    // Return intersection
+                    return new Line(new Point(startX, staticY), new Point(endX, staticY));
+                }
+            }
+
+            return a;
+
+        }
+
+        // TODO: Get rid of all of these, we only need the second part.
+        public override bool Equals(object obj)
+        {
+            if (obj is Line)
+            {
+                return Equals((Line)obj);
+            }
+            return base.Equals(obj);
+        }
+
+        public bool Equals(Line other)
+        {
+            return other.Start.Equals(Start) && other.End.Equals(End);
         }
     }
 }

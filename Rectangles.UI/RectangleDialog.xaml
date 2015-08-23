@@ -1,0 +1,27 @@
+﻿<Window x:Class="Rectangles.UI.RectangleDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Rectangles.UI.ViewModels"
+        Title="RectangleDialog" Height="350" Width="525"
+       >
+    <Window.DataContext>
+        <vm:RectangleDialogViewModel />
+    </Window.DataContext>
+    <DockPanel>
+        <!-- <ToolBarTray HorizontalAlignment="Stretch" DockPanel.Dock="Top" >-->
+            <ToolBar DockPanel.Dock="Top">
+                <Button Name="DrawRectangle" ToolTip="Draw a rectangle" Height="32" Width="32"
+                        Click="DrawRectange_Click" BorderBrush="Blue" Margin="2">
+                    <Image Source="Images/Rectangle.jpg" Stretch="Fill" />
+                </Button>
+            <Button Name="btnContainment" Height="32" BorderBrush="Black" Margin="2" Click="CheckContainment_Click">Check Containment</Button>
+            <Button Name="btnIntersection" Height="32" BorderBrush="Black" Margin="2" Click="CheckIntersection_Click">Check Intersection</Button>
+
+            <Button Name="btnClear" Height="32" BorderBrush="Black" Margin="2" Click="btnClear_Click" >Clear</Button>
+
+        </ToolBar>
+
+        <!--</ToolBarTray>-->
+        <Canvas Name="RectCanvas" Background="White" DockPanel.Dock="Bottom"  MouseLeftButtonDown="RectCanvas_OnMouseLeftButtonDown" />
+    </DockPanel>    
+</Window>
