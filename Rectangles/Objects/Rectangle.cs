@@ -97,6 +97,11 @@ namespace Rectangles.Objects
         }
 
 
+        public Rectangle GetIntersection(Rectangle other)
+        {
+            throw  new NotImplementedException();
+        }
+
         public List<Line> GetSides()
         {
             return new List<Line>
