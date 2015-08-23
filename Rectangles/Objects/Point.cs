@@ -11,15 +11,17 @@
             Y = y;
         }
 
-        public Point AddX(double x)
+        public Point OffsetX(double x)
         {
             return new Point(X + x, Y);
         }
 
-        public Point AddY(double y)
+        public Point OffsetY(double y)
         {
             return new Point(X, Y + y);
         }
+
+        #region Overloads
 
         public override bool Equals(object obj)
         {
@@ -39,5 +41,7 @@
         {
             return "( " + X + " , " + Y + " ) ";
         }
+
+        #endregion
     }
 }

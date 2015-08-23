@@ -16,11 +16,12 @@ namespace Rectangles.Objects
         public Point End;
         public Orientation Direction;
 
+        #region Constructors
+
         public double Length
         {
-            get { return GetLength();}
+            get { return GetLength(); }
         }
-
 
         public Line(Point start, Point end)
         {
@@ -54,6 +55,8 @@ namespace Rectangles.Objects
             }
         }
 
+        #endregion
+
         public Orientation GetDirection()
         {
             if (Start.X == End.X) return Orientation.Vertical;
@@ -62,7 +65,15 @@ namespace Rectangles.Objects
             // TODO: This might not be right.
             throw new InvalidDataException("Lines in Rectangles must be vertical or horizontal.");
         }
+        
+        private double GetLength()
+        {
+            if (Direction == Orientation.Horizontal) return Math.Abs(Start.X - End.X);
+            if (Direction == Orientation.Vertical) return Math.Abs(Start.Y - End.Y);
 
+            return 0;
+        }
+        
         public bool DoesIntersectionExist(Line other)
         {
             //Final product, commented out to aid development
@@ -73,44 +84,6 @@ namespace Rectangles.Objects
 
             return OtherInXBounds(other) && OtherInYBounds(other);
         }
-
-        #region Y Bounds
-
-        private bool OtherInYBounds(Line other)
-        {
-            return OtherInYUpperBounds(other.Start) || OtherInYBottomBounds(other.End);
-        }
-
-        private bool OtherInYBottomBounds(Point other)
-        {
-            return End.Y >= other.Y;
-        }
-
-        private bool OtherInYUpperBounds(Point other)
-        {
-            return Start.Y <= other.Y;
-        }
-        #endregion
-
-        #region X Bounds
-
-        private bool OtherInXBounds(Line other)
-        {
-            return OtherInXLeftBounds(other.Start) && OtherInXRightBounds(other.End);
-        }
-
-        private bool OtherInXRightBounds(Point other)
-        {
-            return End.X >= other.X;
-        }
-
-        private bool OtherInXLeftBounds(Point other)
-        {
-            return Start.X <= other.X;
-        }
-
-        #endregion
-
 
         public Point GetIntersectionPoint(Line other)
         {
@@ -140,24 +113,20 @@ namespace Rectangles.Objects
             throw new InvalidDataException("Lines don't intersect");
         }
 
-
-        public bool DoesThisLineContain(Line other)
+        public bool IsLineAdjacent(Line other)
         {
+            if (other.Direction != Direction) return false;
+            
             if (IsOtherPointBetweenMyPoints(other.Start) || IsOtherPointBetweenMyPoints(other.End))
             {
-                if (other.Direction == Direction)
-                {
-                    return true;
-                }
+                return true;
             }
 
             return false;
-        }
 
-        private double DistanceBetweenPoints(Point a, Point b)
-        {
-            return Math.Sqrt(Math.Pow((a.X - b.X), 2) + Math.Pow((a.Y - b.Y), 2));
         }
+        
+        #region Helper Methods
 
         private bool IsOtherPointBetweenMyPoints(Point other)
         {
@@ -167,13 +136,53 @@ namespace Rectangles.Objects
                    DistanceBetweenPoints(Start, End);
         }
 
-        private double GetLength()
+        private double DistanceBetweenPoints(Point a, Point b)
         {
-            if (Direction == Orientation.Horizontal) return Math.Abs(Start.X - End.X);
-            if (Direction == Orientation.Vertical) return Math.Abs(Start.Y - End.Y);
-
-            return 0;
+            return Math.Sqrt(Math.Pow((a.X - b.X), 2) + Math.Pow((a.Y - b.Y), 2));
         }
+
+
+        #region Y Bounds
+
+        private bool OtherInYBounds(Line other)
+        {
+            return OtherInYUpperBounds(other.Start) || OtherInYBottomBounds(other.End);
+        }
+
+        private bool OtherInYBottomBounds(Point other)
+        {
+            return End.Y >= other.Y;
+        }
+
+        private bool OtherInYUpperBounds(Point other)
+        {
+            return Start.Y <= other.Y;
+        }
+
+        #endregion
+
+        #region X Bounds
+
+        private bool OtherInXBounds(Line other)
+        {
+            return OtherInXLeftBounds(other.Start) && OtherInXRightBounds(other.End);
+        }
+
+        private bool OtherInXRightBounds(Point other)
+        {
+            return End.X >= other.X;
+        }
+
+        private bool OtherInXLeftBounds(Point other)
+        {
+            return Start.X <= other.X;
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Overloads
 
         public override string ToString()
         {
@@ -220,8 +229,7 @@ namespace Rectangles.Objects
                     }
 
                     // Return intersection
-                    return new Line(new Point(staticX, startY), new Point(staticX, endY) );
-
+                    return new Line(new Point(staticX, startY), new Point(staticX, endY));
                 }
                 else if (a.Direction == Orientation.Horizontal)
                 {
@@ -262,7 +270,6 @@ namespace Rectangles.Objects
             }
 
             return a;
-
         }
 
         // TODO: Get rid of all of these, we only need the second part.
@@ -270,7 +277,7 @@ namespace Rectangles.Objects
         {
             if (obj is Line)
             {
-                return Equals((Line)obj);
+                return Equals((Line) obj);
             }
             return base.Equals(obj);
         }
@@ -279,5 +286,7 @@ namespace Rectangles.Objects
         {
             return other.Start.Equals(Start) && other.End.Equals(End);
         }
+
+        #endregion
     }
 }

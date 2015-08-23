@@ -7,79 +7,102 @@ namespace Rectangles.Objects
     // TODO: Extract this to an abstract once we have the logic worked out
     public class Rectangle
     {
-        public const int Top = 0;
-        public const int Right = 1;
-        public const int Bottom = 2;
-        public const int Left = 3;
-        
-        public Point StartPoint;
-        public double Width;
-        public double Height;
+        public const int TOP = 0;
+        public const int RIGHT = 1;
+        public const int BOTTOM = 2;
+        public const int LEFT = 3;
 
-
-        //Computed properties
-        public Point TopLeft
+        public Point StartPoint
         {
-            get { return StartPoint; }
+            get { return Sides[TOP].Start; }
         }
 
-        public Point TopRight
+        public double Width
         {
-            get { return new Point(StartPoint.X + Width, StartPoint.Y); }
+            get { return Sides[TOP].Length; }
+        }
+        public double Height
+        {
+            get { return Sides[RIGHT].Length; }
         }
 
-        public Point BottomRight
-        {
-            get { return new Point(StartPoint.X + Width, StartPoint.Y + Height); }
-        }
-
-        public Point BottomLeft
-        {
-            get { return new Point(StartPoint.X, StartPoint.Y + Height); }
-        }
+        public Line[] Sides;
 
         // TODO: Sanity checks
         public Rectangle()
         {
+            Sides = new Line[4];
         }
+        
+        public Rectangle(double startX, double startY, double width, double height) : this(
+            // Top
+            new Line(new Point(startX, startY), width, Line.Orientation.Horizontal),
+            // Right
+            new Line(new Point(startX + width, startY), height, Line.Orientation.Vertical),
+            // Bottom
+            new Line(new Point(startX, startY + height), width, Line.Orientation.Horizontal),
+            // Left
+            new Line(new Point(startX, startY), height, Line.Orientation.Vertical)
 
-
-        public Rectangle(double startX, double startY, double width, double height) : this()
-        {
-            StartPoint = new Point(startX, startY);
-            Width = width;
-            Height = height;
-        }
+            )
+        {}
 
         public Rectangle(Line top, Line right, Line bottom, Line left) : this()
         {
-            // TODO: Refactor this when pulling out Points
-            StartPoint = top.Start;
-            Width = top.Length;
-            Height = right.Length;
+            Sides[TOP] = top;
+            Sides[RIGHT] = right;
+            Sides[BOTTOM] = bottom;
+            Sides[LEFT] = left;
         }
 
-
+        /// <summary>
+        /// Check if other is touching this Rectangle
+        /// </summary>
+        /// <param name="other">Rectangle to test for adjacency</param>
+        /// <returns>Whether other is adjacent to this</returns>
         public bool IsAdjacent(Rectangle other)
         {
-            List<Line> mySides = GetSides();
-            List<Line> otherSides = other.GetSides();
+            // A contained rectangle is never adjacent.
+            if (Contains(other) || other.Contains(this)) return false;
 
-            for (int i = 0; i < mySides.Count; i++)
+            // TODO: Refactor to be clean
+            // TODO: Test horizontal/vertical to improve performance
+            // Iterate over the matching sides of both rectangles and check if exactly 1 line touches
+            int touchCount = 0;
+
+            for (int i = 0; i < Sides.Length; i++)
             {
-                if (mySides[i].DoesThisLineContain(otherSides[i]))
+                touchCount += CountAdjacentTo(Sides[i], other); 
+            }
+
+
+            return touchCount > 1;
+        }
+
+        /// <summary>
+        /// Count number of sides of Other that are adjacent to a passed in Line
+        /// </summary>
+        /// <param name="myLine"></param>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        private int CountAdjacentTo(Line myLine, Rectangle other)
+        {
+            int touchCount = 0;
+            for (int j = 0; j < other.Sides.Length; j++)
+            {
+                if (myLine.IsLineAdjacent(other.Sides[j]))
                 {
-                    return true;
+                    touchCount++;
                 }
             }
 
-            return false;
+            return touchCount;
         }
 
         public bool Contains(Rectangle other)
         {
             // TODO: Does other count as Intersected if it is contained?
-
+            // TODO: Use the Line bound rules
             foreach (Point corner in other.GetCorners())
             {
                 if (!IsPointWithinMe(corner)) return false;
@@ -104,14 +127,10 @@ namespace Rectangles.Objects
             // TODO: Completely refactor Rectangle to only use Lines
             try
             {
-                List<Line> mySides = GetSides();
-                List<Line> otherSides = other.GetSides();
-
-
-                Line newTop = mySides[Top] - otherSides[Top];
-                Line newRight = mySides[Right] - otherSides[Right];
-                Line newBottom = mySides[Bottom] - otherSides[Bottom];
-                Line newLeft = mySides[Left] - otherSides[Left];
+                Line newTop = Sides[TOP] - other.Sides[TOP];
+                Line newRight = Sides[RIGHT] - other.Sides[RIGHT];
+                Line newBottom = Sides[BOTTOM] - other.Sides[BOTTOM];
+                Line newLeft = Sides[LEFT] - other.Sides[LEFT];
 
                 return new Rectangle(newTop, newRight, newBottom, newLeft);
             }
@@ -123,25 +142,15 @@ namespace Rectangles.Objects
             return null;
         }
 
-        public List<Line> GetSides()
-        {
-            return new List<Line>
-            {
-                new Line(TopLeft, TopRight),
-                new Line(TopRight, BottomRight),
-                new Line(BottomLeft, BottomRight),
-                new Line(TopLeft, BottomLeft)
-            };
-        }
-
         private List<Point> GetCorners()
         {
+            // TODO: Refactor this out
             return new List<Point>
             {
-                TopLeft,
-                TopRight,
-                BottomRight,
-                BottomLeft
+                Sides[TOP].Start,
+                Sides[RIGHT].Start,
+                Sides[BOTTOM].End,
+                Sides[LEFT].End
             };
         }
 
@@ -153,7 +162,8 @@ namespace Rectangles.Objects
         // Could also use a + height style of things
         private bool IsPointInYBounds(Point point)
         {
-            if (TopRight.Y <= point.Y && point.Y <= BottomRight.Y)
+            // TODO: Use Line bounds checks
+            if (Sides[LEFT].Start.Y <= point.Y && point.Y <= Sides[LEFT].End.Y)
             {
                 return true;
             }
@@ -163,19 +173,20 @@ namespace Rectangles.Objects
         // Could also use a + width style
         private bool IsPointInXBounds(Point point)
         {
-            if (BottomLeft.X <= point.X && point.X <= BottomRight.X)
+            if (Sides[BOTTOM].Start.X <= point.X && point.X <= Sides[BOTTOM].End.X)
             {
                 return true;
             }
             return false;
         }
 
+        #region Overloads
+
         public override string ToString()
         {
-            return "Top: " + GetSides()[0] + " Bottom: " + GetSides()[2];
+            return "Top: " + Sides[TOP] + " Bottom: " + Sides[BOTTOM];
         }
-
-
+        
         public override bool Equals(object obj)
         {
             if (obj is Rectangle)
@@ -191,5 +202,8 @@ namespace Rectangles.Objects
                    this.Width == other.Width &&
                    this.Height == other.Height;
         }
+    
+        #endregion
+
     }
 }

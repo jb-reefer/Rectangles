@@ -18,7 +18,7 @@ namespace Rectangles.Test
             Line a = new Line(new Point(0,0), 2, Line.Orientation.Horizontal );
             Line b = new Line(new Point(0, 0), 1, Line.Orientation.Horizontal);
 
-            Assert.IsTrue(a.DoesThisLineContain(b));
+            Assert.IsTrue(a.IsLineAdjacent(b));
         }
 
         [Test]

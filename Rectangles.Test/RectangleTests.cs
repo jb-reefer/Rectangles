@@ -37,12 +37,21 @@ namespace Rectangles.Test
             Assert.IsFalse(a.IsAdjacent(b));
         }
 
+        [Test]
+        public void CheckBadAdjacency()
+        {
+            Rectangle a = new Rectangle(1, 2, 1, 1);
+            Rectangle b = new Rectangle(2, 2, 1, 1);
+
+
+            Assert.IsTrue(a.IsAdjacent(b));
+        }
 
         [Test]
         public void PointContained()
         {
             Rectangle a = new Rectangle(1, 2, 1, 1);
-            Point point = new Point(1.5, 1.5);
+            Point point = new Point(1.5, 2.5);
 
             Assert.IsTrue(a.IsPointWithinMe(point));
         }
@@ -60,7 +69,7 @@ namespace Rectangles.Test
         public void RectangleContained()
         {
             Rectangle a = new Rectangle(1, 2, 1, 1);
-            Rectangle b = new Rectangle(1.25, 1.25, .5, .5);
+            Rectangle b = new Rectangle(1.25, 2.25, .5, .5);
 
             Assert.IsTrue(a.Contains(b));
         }
