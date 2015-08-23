@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,9 +24,7 @@ namespace Rectangles.Test
         [Test]
         public void ALineIsNotAPoint()
         {
-            // TODO: Use a test delegate like an adult
-            Line badLine = new Line(new Point(1, 1), new Point(1, 1));
-            Assert.Pass();
+            Assert.Throws<InvalidDataException>(delegate { Line badLine = new Line(new Point(1, 1), new Point(1, 1)); });
         }
 
         [Test]
