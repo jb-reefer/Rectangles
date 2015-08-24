@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using Rectangles.Objects;
 
@@ -64,26 +60,13 @@ namespace Rectangles.Test
 
         [Test]
         [Category("Containment")]
-
-        public void PointContained()
+        public void FillHalfTestContained()
         {
-            Rectangle a = new Rectangle(1, 2, 1, 1);
-            Point point = new Point(1.5, 2.5);
+            Rectangle a = new Rectangle(4, 4, 1, 2);
+            Rectangle b = new Rectangle(4, 4, 1, 1);
 
-            Assert.IsTrue(a.IsPointInBounds(point));
+            Assert.IsTrue(a.Contains(b));
         }
-
-        [Test]
-        [Category("Containment")]
-
-        public void PointNotContained()
-        {
-            Rectangle a = new Rectangle(1, 2, 1, 1);
-            Point point = new Point(3, 3);
-
-            Assert.IsFalse(a.IsPointInBounds(point));
-        }
-
 
         [Test]
         public void BasicIntersection()
@@ -240,7 +223,8 @@ namespace Rectangles.Test
         public void ExampleL()
         {
             Rectangle a = new Rectangle(4, 0, 1, 3);
-            Rectangle b = new Rectangle(4, 1, 3, 1);
+            //Rectangle b = new Rectangle(4, 1, 3, 1);
+            Rectangle b = new Rectangle(new Point( 4, 1) , new Point(  7, 2));
 
             Rectangle intersection = a.GetIntersection(b);
 

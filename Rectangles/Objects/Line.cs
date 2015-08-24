@@ -34,10 +34,36 @@ namespace Rectangles.Objects
             End = end;
 
             Direction = GetDirection();
+
+            // More sanity checks
+            if (Direction == Orientation.Horizontal)
+            {
+                if (Start.X < End.X)
+                {
+                    throw new InvalidDataException("Invalid length on line with start point " + start + ", a Line cannot have negative Length. Length is: " + (Start.X - End.X));
+                }
+            }
+            if (Direction == Orientation.Vertical)
+            {
+                throw new InvalidDataException("Invalid length on line with start point " + start + ", a Line cannot have negative Length. Length is: " + (Start.Y - End.Y));
+            }
         }
 
         public Line(Point start, double length, Orientation direction)
         {
+            // Sanity checks
+            if (length == 0)
+            {
+                throw new InvalidDataException("Invalid length on line with start point " + start + ", a Line cannot have Length 0");
+            }
+
+            if (length < 0)
+            {
+                throw new InvalidDataException("Invalid length on line with start point " + start + ", a Line cannot have negative Length. Length is: " + length);
+
+            }
+
+
             Start = start;
             Direction = direction;
 
@@ -56,7 +82,7 @@ namespace Rectangles.Objects
         }
 
         #endregion
-        
+
         private double GetLength()
         {
             if (Direction == Orientation.Horizontal) return Math.Abs(Start.X - End.X);
@@ -64,20 +90,19 @@ namespace Rectangles.Objects
 
             return 0;
         }
-        
-        public bool IsLineAdjacent(Line other)
+
+        public bool IsAdjacent(Line other)
         {
             if (other.Direction != Direction) return false;
-            
+
             if (IsOtherPointBetweenMyPoints(other.Start) || IsOtherPointBetweenMyPoints(other.End))
             {
                 return true;
             }
 
             return false;
-
         }
-        
+
         #region Helper Methods
 
         private Orientation GetDirection()
@@ -85,7 +110,7 @@ namespace Rectangles.Objects
             if (Start.X == End.X) return Orientation.Vertical;
             if (Start.Y == End.Y) return Orientation.Horizontal;
 
-           throw new InvalidDataException("Lines in Rectangles must be vertical or horizontal.");
+            throw new InvalidDataException("Lines in Rectangles must be vertical or horizontal.");
         }
 
         private bool IsOtherPointBetweenMyPoints(Point other)
@@ -100,20 +125,19 @@ namespace Rectangles.Objects
             return Math.Sqrt(Math.Pow((a.X - b.X), 2) + Math.Pow((a.Y - b.Y), 2));
         }
 
-
         #region Y Bounds
 
-        private bool OtherInYBounds(Line other)
+        public bool InYBounds(Point other)
         {
-            return OtherInYUpperBounds(other.Start) || OtherInYBottomBounds(other.End);
+            return InYUpperBounds(other) || InYBottomBounds(other);
         }
 
-        private bool OtherInYBottomBounds(Point other)
+        public bool InYBottomBounds(Point other)
         {
             return End.Y <= other.Y;
         }
 
-        private bool OtherInYUpperBounds(Point other)
+        public bool InYUpperBounds(Point other)
         {
             return Start.Y <= other.Y;
         }
@@ -122,17 +146,17 @@ namespace Rectangles.Objects
 
         #region X Bounds
 
-        private bool OtherInXBounds(Line other)
+        public bool InXBounds(Point other)
         {
-            return OtherInXLeftBounds(other.Start) && OtherInXRightBounds(other.End);
+            return InXRightBounds(other) || InXLeftBounds(other);
         }
 
-        private bool OtherInXRightBounds(Point other)
+        public bool InXRightBounds(Point other)
         {
             return End.X >= other.X;
         }
 
-        private bool OtherInXLeftBounds(Point other)
+        public bool InXLeftBounds(Point other)
         {
             return Start.X <= other.X;
         }
@@ -148,94 +172,12 @@ namespace Rectangles.Objects
             return Start + " -> " + End;
         }
 
-        // Perform a geometric subtraction
-        public static Line operator -(Line a, Line b)
-        {
-            // Shorten the line
-            if (a.Direction == b.Direction)
-            {
-                if (a.Direction == Orientation.Vertical)
-                {
-                    double staticX = a.Start.X;
-                    double startY;
-                    // Figure out Y coords
-                    // Get Start Point
-                    // Start point is on A
-                    if (a.OtherInYUpperBounds(b.Start))
-                    {
-                        startY = b.Start.Y;
-                    }
-                    // Start point is not on A, take A's start point
-                    else
-                    {
-                        startY = a.Start.Y;
-                    }
-
-
-                    // Get End Point
-                    double endY;
-                    // Figure out Y coords
-                    // Get Start Point
-                    // Start point is on A
-                    if (a.OtherInYBottomBounds(b.End))
-                    {
-                        endY = b.End.Y;
-                    }
-                    // Start point is not on A, take A's start point
-                    else
-                    {
-                        endY = a.End.Y;
-                    }
-
-                    // Return intersection
-                    return new Line(new Point(staticX, startY), new Point(staticX, endY));
-                }
-                else if (a.Direction == Orientation.Horizontal)
-                {
-                    double staticY = b.Start.Y;
-                    double startX;
-                    // Figure out Y coords
-                    // Get Start Point
-                    // Start point is on A
-                    if (a.OtherInXLeftBounds(b.Start))
-                    {
-                        startX = b.Start.X;
-                    }
-                    // Start point is not on A, take A's start point
-                    else
-                    {
-                        startX = a.Start.X;
-                    }
-
-
-                    // Get End Point
-                    double endX;
-                    // Figure out Y coords
-                    // Get Start Point
-                    // Start point is on A
-                    if (a.OtherInXRightBounds(b.End))
-                    {
-                        endX = b.End.X;
-                    }
-                    // Start point is not on A, take A's start point
-                    else
-                    {
-                        endX = a.End.X;
-                    }
-
-                    // Return intersection
-                    return new Line(new Point(startX, staticY), new Point(endX, staticY));
-                }
-            }
-
-            return a;
-        }
-
         public override bool Equals(object obj)
         {
-            if (obj is Line)
+            Line other = obj as Line;
+            if (other != null)
             {
-                return Equals((Line) obj);
+                return Equals(other);
             }
             return base.Equals(obj);
         }
