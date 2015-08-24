@@ -13,6 +13,7 @@ namespace Rectangles.Test
     class LineTests
     {
         [Test]
+        [Category("Adjacency")]
         public void Adjacency()
         {
             Line a = new Line(new Point(0,0), 2, Line.Orientation.Horizontal );
@@ -22,65 +23,14 @@ namespace Rectangles.Test
         }
 
         [Test]
+        [Category("Sanity")]
         public void ALineIsNotAPoint()
         {
             Assert.Throws<InvalidDataException>(delegate { Line badLine = new Line(new Point(1, 1), new Point(1, 1)); });
         }
-
+        
         [Test]
-        public void SimpleIntersection()
-        {
-            Line a = new Line(new Point(1, 1), 2, Line.Orientation.Horizontal);
-            Line b = new Line(new Point(2, 0), 2, Line.Orientation.Vertical);
-
-            Point intersection = a.GetIntersectionPoint(b);
-
-            Console.WriteLine(intersection);
-
-            Assert.IsTrue(a != null);
-        }
-
-        [Test]
-        [Category("Intersections")]
-        public void HorizontalsNoIntersection()
-        {
-            Line a = new Line(new Point(1, 1), 1, Line.Orientation.Horizontal );
-            Line b = new Line(new Point(3, 1), 1, Line.Orientation.Horizontal);
-
-            Assert.IsFalse(a.DoesIntersectionExist(b));
-        }
-
-        [Test]
-        [Category("Intersections")]
-        public void VerticalsNoIntersection()
-        {
-            Line a = new Line(new Point(1, 1), 1, Line.Orientation.Vertical);
-            Line b = new Line(new Point(1, 3), 1, Line.Orientation.Vertical);
-
-            Assert.IsFalse(a.DoesIntersectionExist(b));
-        }
-
-        [Test]
-        [Category("Intersections")]
-        public void OppositesNoIntersection()
-        {
-            Line a = new Line(new Point(1, 2), 1, Line.Orientation.Horizontal);
-            Line b = new Line(new Point(4, 1), 1, Line.Orientation.Vertical);
-
-            Assert.IsFalse(a.DoesIntersectionExist(b));
-        }
-
-        [Test]
-        [Category("Intersections")]
-        public void IntersectionDoesExist()
-        {
-            Line a = new Line(new Point(1, 1), 2, Line.Orientation.Horizontal);
-            Line b = new Line(new Point(2, 0), 2, Line.Orientation.Vertical);
-
-            Assert.IsTrue(a.DoesIntersectionExist(b));
-        }
-
-        [Test]
+        [Category("Subtraction")]
         public void VerticalLineSubtraction()
         {
             Line a = new Line(new Point(1, 1), 5, Line.Orientation.Vertical);
@@ -91,6 +41,7 @@ namespace Rectangles.Test
         }
 
         [Test]
+        [Category("Subtraction")]
         public void HorizontalLineSubtraction()
         {
             Line a = new Line(new Point(1, 1), 5, Line.Orientation.Horizontal);

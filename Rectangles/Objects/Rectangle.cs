@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Remoting.Messaging;
 
 namespace Rectangles.Objects
@@ -55,6 +56,11 @@ namespace Rectangles.Objects
             Sides[LEFT] = left;
         }
 
+        public Rectangle(Point upperLeft, Point bottomRight)
+            : this(upperLeft.X, upperLeft.Y, bottomRight.X - upperLeft.X, bottomRight.Y - upperLeft.Y)
+        {
+        }
+
         /// <summary>
         /// Check if other is touching this Rectangle
         /// </summary>
@@ -101,17 +107,17 @@ namespace Rectangles.Objects
 
         public bool Contains(Rectangle other)
         {
+            if (other == null) return false;
             // TODO: Does other count as Intersected if it is contained?
             // TODO: Use the Line bound rules
-            foreach (Point corner in other.GetCorners())
+            foreach (Point corner in other.Sides.Select( side => side.Start))
             {
-                if (!IsPointWithinMe(corner)) return false;
+                if (!IsPointInBounds(corner)) return false;
             }
 
             return true;
         }
-
-
+        
         /// <summary>
         /// Returns the Rectangle formed by the intersection of This and Other
         /// </summary>
@@ -119,11 +125,75 @@ namespace Rectangles.Objects
         /// <returns></returns>
         public Rectangle GetIntersection(Rectangle other)
         {
-            if (Contains(other))
+            // Sanity checks
+            if (other == null) return null;
+            if (Contains(other) || other.Contains(this)) return null;
+            
+
+            /*
+
+            List<Point> foundIntersections = new List<Point>();
+            Point temp = null;
+
+            // Compare the two Verticals to the two Horizontals
+            for (int i = 0; i < Sides.Length; i++)
             {
+                // Only look for single point intersections. Multipoint intersections can be avoided using the below
+                if (Sides[i].Direction == Line.Orientation.Horizontal)
+                {
+                    // Check against Left and Right sides only
+                    temp = GetIntersections(Sides[i], other.Sides[LEFT]);
+                    if (temp != null) foundIntersections.Add(temp);
+
+                    temp = GetIntersections(Sides[i], other.Sides[RIGHT]);
+                    if (temp != null) foundIntersections.Add(temp);
+                }
+                else if (Sides[i].Direction == Line.Orientation.Vertical)
+                {
+                    // Check against Top and Bottom sides only
+                    temp = GetIntersections(Sides[i], other.Sides[TOP]);
+                    if (temp != null) foundIntersections.Add(temp);
+
+                    temp = GetIntersections(Sides[i], other.Sides[BOTTOM]);
+                    if (temp != null) foundIntersections.Add(temp);
+                }
+            }
+
+            foundIntersections.Sort();
+
+            try
+            {
+                return new Rectangle(foundIntersections.FirstOrDefault(), foundIntersections.LastOrDefault());
+            }
+            catch (Exception)
+            {
+                // Do nothing. The sanity checks indicate there is no intersection
+                return null;
+            }
+            */
+
+            double x5 = Math.Max(Sides[TOP].Start.X, other.Sides[TOP].Start.X);
+            double y5 = Math.Max(Sides[TOP].Start.Y, other.Sides[TOP].Start.Y);
+            double x6 = Math.Min(Sides[BOTTOM].End.X, other.Sides[BOTTOM].End.X);
+            double y6 = Math.Min(Sides[BOTTOM].End.Y, other.Sides[BOTTOM].End.X);
+
+            // TODO Handle this
+            // This is a containment failure
+            if (x5 == x6 && y5 == y6) return null;
+
+            try
+            {
+                return new Rectangle(new Point(x5, y5), new Point(x6, y6));
+
+            }
+            catch
+            {
+                // Do nothing. There is no intersection.
                 return null;
             }
 
+            // this 
+            /*
             // TODO: Completely refactor Rectangle to only use Lines
             try
             {
@@ -133,28 +203,14 @@ namespace Rectangles.Objects
                 Line newLeft = Sides[LEFT] - other.Sides[LEFT];
 
                 return new Rectangle(newTop, newRight, newBottom, newLeft);
-            }
-            catch
-            {
-                // Do nothing. There is no intersection.
-            }
+            }*/
+           
 
-            return null;
+
         }
 
-        private List<Point> GetCorners()
-        {
-            // TODO: Refactor this out
-            return new List<Point>
-            {
-                Sides[TOP].Start,
-                Sides[RIGHT].Start,
-                Sides[BOTTOM].End,
-                Sides[LEFT].End
-            };
-        }
 
-        public bool IsPointWithinMe(Point point)
+        public bool IsPointInBounds(Point point)
         {
             return IsPointInYBounds(point) && IsPointInXBounds(point);
         }
@@ -163,7 +219,7 @@ namespace Rectangles.Objects
         private bool IsPointInYBounds(Point point)
         {
             // TODO: Use Line bounds checks
-            if (Sides[LEFT].Start.Y <= point.Y && point.Y <= Sides[LEFT].End.Y)
+         if (Sides[LEFT].Start.Y <= point.Y && point.Y <= Sides[LEFT].End.Y)
             {
                 return true;
             }

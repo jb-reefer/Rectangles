@@ -24,6 +24,11 @@ namespace Rectangles.UI
     {
         public new RectangleDialogViewModel DataContext;
         private bool _notFirstRectangle;
+        private double _dragStartX;
+        private double _dragStartY;
+        private bool _dragging;
+        private double _startPointX;
+        private double _startPointY;
 
         public RectangleDialog()
         {
@@ -98,6 +103,7 @@ namespace Rectangles.UI
         private void RectCanvas_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             // Draw a big rectangle
+            /*
             int height = 300;
             int width = 300;
             if (_notFirstRectangle)
@@ -106,9 +112,22 @@ namespace Rectangles.UI
                 width = 75;
             }
 
+            */
+
+            if (!_dragging)
+            {
+                _startPointX = e.GetPosition(RectCanvas).X;
+                _startPointY = e.GetPosition(RectCanvas).Y;
+                _dragStartX = e.GetPosition(this).X;
+                _dragStartY = e.GetPosition(this).Y;
+                _dragging = true;
+            }
+
             // Add to the canvas
-            AddRectangle(e.GetPosition(this).X, e.GetPosition(this).Y, width, height);            
+            //AddRectangle(e.GetPosition(this).X, e.GetPosition(this).Y, width, height);            
         }
+
+        
 
         private void CheckIntersection_Click(object sender, RoutedEventArgs e)
         {
@@ -139,6 +158,43 @@ namespace Rectangles.UI
         {
             DataContext.Rectangles.Clear();
             RectCanvas.Children.Clear();
+        }
+
+        private void RectCanvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (_dragging)
+            {
+                double finalX = e.GetPosition(this).X;
+                double finalY = e.GetPosition(this).Y;
+
+
+                double width, height;
+
+                width = finalX - _dragStartX;
+                          
+                height = finalY - _dragStartY;
+
+                try
+                {
+                    Rectangle rect = new Rectangle { Width = width, Height = height, Stroke = Brushes.Black };
+                    RectCanvas.Children.Add(rect);
+                    Canvas.SetLeft(rect, _startPointX + _dragStartX);
+                    Canvas.SetTop(rect, _startPointY + _dragStartY);
+
+                }
+                catch 
+                {
+                    // Bad user input. Don't worry about it.
+                }
+
+               
+
+                _dragging = false;
+
+                _dragStartX = 0;
+                _dragStartY = 0;
+            }
+
         }
     }
 

@@ -11,7 +11,7 @@ namespace Rectangles.Objects
             Horizontal
         }
 
-        // A line is described by two points, so....
+        // A line is described by two points
         public Point Start;
         public Point End;
         public Orientation Direction;
@@ -56,15 +56,6 @@ namespace Rectangles.Objects
         }
 
         #endregion
-
-        public Orientation GetDirection()
-        {
-            if (Start.X == End.X) return Orientation.Vertical;
-            if (Start.Y == End.Y) return Orientation.Horizontal;
-
-            // TODO: This might not be right.
-            throw new InvalidDataException("Lines in Rectangles must be vertical or horizontal.");
-        }
         
         private double GetLength()
         {
@@ -74,45 +65,6 @@ namespace Rectangles.Objects
             return 0;
         }
         
-        public bool DoesIntersectionExist(Line other)
-        {
-            //Final product, commented out to aid development
-            if (Direction == other.Direction)
-            {
-                return false;
-            }
-
-            return OtherInXBounds(other) && OtherInYBounds(other);
-        }
-
-        public Point GetIntersectionPoint(Line other)
-        {
-            // TODO: Figure out sanity checking with intersection points, if we're adjacent there's an infinite number
-            // Check that it actually does intersect
-            if (!DoesIntersectionExist(other))
-            {
-                return null;
-            }
-
-            double x;
-            double y;
-            if (Direction == Orientation.Vertical)
-            {
-                x = Start.X;
-                y = other.Start.Y;
-                return new Point(x, y);
-            }
-            if (Direction == Orientation.Horizontal)
-            {
-                x = other.Start.X;
-                y = Start.Y;
-                return new Point(x, y);
-            }
-
-            // TODO: Make this professional
-            throw new InvalidDataException("Lines don't intersect");
-        }
-
         public bool IsLineAdjacent(Line other)
         {
             if (other.Direction != Direction) return false;
@@ -128,10 +80,17 @@ namespace Rectangles.Objects
         
         #region Helper Methods
 
+        private Orientation GetDirection()
+        {
+            if (Start.X == End.X) return Orientation.Vertical;
+            if (Start.Y == End.Y) return Orientation.Horizontal;
+
+           throw new InvalidDataException("Lines in Rectangles must be vertical or horizontal.");
+        }
+
         private bool IsOtherPointBetweenMyPoints(Point other)
         {
             // If the distance of Start to Other + Other to End is the distance from Start to End, it's in between the two points
-            // TODO: Fix this 
             return (DistanceBetweenPoints(Start, other) + DistanceBetweenPoints(other, End)) ==
                    DistanceBetweenPoints(Start, End);
         }
@@ -151,7 +110,7 @@ namespace Rectangles.Objects
 
         private bool OtherInYBottomBounds(Point other)
         {
-            return End.Y >= other.Y;
+            return End.Y <= other.Y;
         }
 
         private bool OtherInYUpperBounds(Point other)
@@ -272,7 +231,6 @@ namespace Rectangles.Objects
             return a;
         }
 
-        // TODO: Get rid of all of these, we only need the second part.
         public override bool Equals(object obj)
         {
             if (obj is Line)

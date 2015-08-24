@@ -22,6 +22,6 @@
         </ToolBar>
 
         <!--</ToolBarTray>-->
-        <Canvas Name="RectCanvas" Background="White" DockPanel.Dock="Bottom"  MouseLeftButtonDown="RectCanvas_OnMouseLeftButtonDown" />
+        <Canvas Name="RectCanvas" Background="White" DockPanel.Dock="Bottom"  MouseLeftButtonDown="RectCanvas_OnMouseLeftButtonDown" MouseLeftButtonUp="RectCanvas_MouseLeftButtonUp" />
     </DockPanel>    
 </Window>

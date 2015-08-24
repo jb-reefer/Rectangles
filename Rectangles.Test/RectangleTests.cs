@@ -11,6 +11,7 @@ namespace Rectangles.Test
     internal class RectangleTests
     {
         [Test]
+        [Category("Adjacency")]
         public void WithBetterConstructor()
         {
             Rectangle a = new Rectangle(1, 2, 1, 1);
@@ -20,6 +21,7 @@ namespace Rectangles.Test
         }
 
         [Test]
+        [Category("Adjacency")]
         public void NotAdjacentHorizontally()
         {
             Rectangle a = new Rectangle(1, 2, 1, 1);
@@ -29,6 +31,7 @@ namespace Rectangles.Test
         }
 
         [Test]
+        [Category("Adjacency")]
         public void NotAdjacentVertically()
         {
             Rectangle a = new Rectangle(1, 2, 1, 1);
@@ -38,6 +41,7 @@ namespace Rectangles.Test
         }
 
         [Test]
+        [Category("Adjacency")]
         public void CheckBadAdjacency()
         {
             Rectangle a = new Rectangle(1, 2, 1, 1);
@@ -48,24 +52,7 @@ namespace Rectangles.Test
         }
 
         [Test]
-        public void PointContained()
-        {
-            Rectangle a = new Rectangle(1, 2, 1, 1);
-            Point point = new Point(1.5, 2.5);
-
-            Assert.IsTrue(a.IsPointWithinMe(point));
-        }
-
-        [Test]
-        public void PointNotContained()
-        {
-            Rectangle a = new Rectangle(1, 2, 1, 1);
-            Point point = new Point(3, 3);
-
-            Assert.IsFalse(a.IsPointWithinMe(point));
-        }
-
-        [Test]
+        [Category("Containment")]
         public void RectangleContained()
         {
             Rectangle a = new Rectangle(1, 2, 1, 1);
@@ -73,6 +60,30 @@ namespace Rectangles.Test
 
             Assert.IsTrue(a.Contains(b));
         }
+
+
+        [Test]
+        [Category("Containment")]
+
+        public void PointContained()
+        {
+            Rectangle a = new Rectangle(1, 2, 1, 1);
+            Point point = new Point(1.5, 2.5);
+
+            Assert.IsTrue(a.IsPointInBounds(point));
+        }
+
+        [Test]
+        [Category("Containment")]
+
+        public void PointNotContained()
+        {
+            Rectangle a = new Rectangle(1, 2, 1, 1);
+            Point point = new Point(3, 3);
+
+            Assert.IsFalse(a.IsPointInBounds(point));
+        }
+
 
         [Test]
         public void BasicIntersection()
@@ -84,10 +95,10 @@ namespace Rectangles.Test
 
             Assert.NotNull(intersection);
             Console.WriteLine(intersection);
-
         }
 
         [Test]
+        [Category("Intersections")]
         public void ExampleA()
         {
             Rectangle a = new Rectangle(1, 1, 2, 2);
@@ -101,6 +112,7 @@ namespace Rectangles.Test
         }
 
         [Test]
+        [Category("Intersections")]
         public void ExampleB()
         {
             Rectangle a = new Rectangle(1, 4, 1, 1);
@@ -112,6 +124,7 @@ namespace Rectangles.Test
         }
 
         [Test]
+        [Category("Intersections")]
         public void ExampleC()
         {
             Rectangle a = new Rectangle(5, 0, 1, 2);
@@ -123,6 +136,7 @@ namespace Rectangles.Test
         }
 
         [Test]
+        [Category("Intersections")]
         public void ExampleD()
         {
             Rectangle a = new Rectangle(4, 4, 1, 2);
@@ -130,23 +144,22 @@ namespace Rectangles.Test
 
             Rectangle intersection = a.GetIntersection(b);
 
-            Rectangle expectedRectangle = new Rectangle(4, 4, 1, 1);
-
-            Assert.AreEqual(expectedRectangle, intersection);
+            Assert.IsNull(intersection);
         }
 
         [Test]
+        [Category("Intersections")]
         public void ExampleE()
         {
             Rectangle a = new Rectangle(8, 0, 2, 1);
-            Rectangle b = new Rectangle(9, 2, 1, 1);
 
-            Rectangle intersection = a.GetIntersection(b);
+            Rectangle intersection = a.GetIntersection(null);
 
             Assert.IsNull(intersection);
         }
 
         [Test]
+        [Category("Intersections")]
         public void ExampleF()
         {
             Rectangle a = new Rectangle(6, 4, 2, 2);
@@ -160,6 +173,7 @@ namespace Rectangles.Test
         }
 
         [Test]
+        [Category("Intersections")]
         public void ExampleG()
         {
             Rectangle a = new Rectangle(1, 1, 3, 2);
@@ -173,6 +187,7 @@ namespace Rectangles.Test
         }
 
         [Test]
+        [Category("Intersections")]
         public void ExampleH()
         {
             Rectangle a = new Rectangle(7, 1, 3, 3);
@@ -180,12 +195,12 @@ namespace Rectangles.Test
 
             Rectangle intersection = a.GetIntersection(b);
 
-            Rectangle expectedRectangle = new Rectangle(8, 2, 2, 1);
 
-            Assert.AreEqual(expectedRectangle, intersection);
+            Assert.IsNull( intersection);
         }
 
         [Test]
+        [Category("Intersections")]
         public void ExampleI()
         {
             Rectangle a = new Rectangle(3, 5, 1, 3);
@@ -193,42 +208,39 @@ namespace Rectangles.Test
 
             Rectangle intersection = a.GetIntersection(b);
 
-            Rectangle expectedRectangle = new Rectangle(4, 5, 1, 1);
-
-            Assert.AreEqual(expectedRectangle, intersection);
+            Assert.IsNull(intersection);
         }
 
         [Test]
-        public void ExampleJ()
+        [Category("Intersections")]
+        public void CompletelyContainedRectangleHasNoIntersection()
         {
             Rectangle a = new Rectangle(0, 0, 3, 3);
             Rectangle b = new Rectangle(1, 1, 1, 1);
 
             Rectangle intersection = a.GetIntersection(b);
 
-            Rectangle expectedRectangle = new Rectangle(1, 1, 1, 1);
-
-            Assert.AreEqual(expectedRectangle, intersection);
+            Assert.IsNull( intersection);
         }
 
         [Test]
-        public void ExampleK()
+        [Category("Intersections")]
+        public void PartiallyContainedRectangleHasNoIntersection()
         {
             Rectangle a = new Rectangle(0, 4, 4, 2);
             Rectangle b = new Rectangle(1, 4, 1, 2);
 
             Rectangle intersection = a.GetIntersection(b);
 
-            Rectangle expectedRectangle = new Rectangle(1, 4, 1, 2);
-
-            Assert.AreEqual(expectedRectangle, intersection);
+            Assert.IsNull(intersection);
         }
 
         [Test]
+        [Category("Intersections")]
         public void ExampleL()
         {
             Rectangle a = new Rectangle(4, 0, 1, 3);
-            Rectangle b = new Rectangle(4, 1, 1, 3);
+            Rectangle b = new Rectangle(4, 1, 3, 1);
 
             Rectangle intersection = a.GetIntersection(b);
 
@@ -238,19 +250,21 @@ namespace Rectangles.Test
         }
 
         [Test]
+        [Category("Intersections")]
         public void ExampleM()
         {
-            Rectangle a = new Rectangle(5, 4, 1, 3);
+            Rectangle a = new Rectangle(5, 4, 3, 1);
             Rectangle b = new Rectangle(6, 3, 1, 3);
 
             Rectangle intersection = a.GetIntersection(b);
 
-            Rectangle expectedRectangle = new Rectangle(6, 3, 1, 1);
+            Rectangle expectedRectangle = new Rectangle(6, 4, 1, 1);
 
             Assert.AreEqual(expectedRectangle, intersection);
         }
 
         [Test]
+        [Category("Intersections")]
         public void ExampleN()
         {
             Rectangle a = new Rectangle(8, 1, 1, 2);
@@ -262,6 +276,7 @@ namespace Rectangles.Test
         }
 
         [Test]
+        [Category("Intersections")]
         public void ExampleP()
         {
             Rectangle a = new Rectangle(9, 4, 2, 1);
@@ -273,6 +288,7 @@ namespace Rectangles.Test
         }
 
         [Test]
+        [Category("Intersections")]
         public void ExampleQ()
         {
             Rectangle a = new Rectangle(0, 1, 1, 2);
@@ -284,6 +300,7 @@ namespace Rectangles.Test
         }
 
         [Test]
+        [Category("Intersections")]
         public void ExampleS()
         {
             Rectangle a = new Rectangle(7, 0, 2, 2);
